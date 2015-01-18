@@ -134,7 +134,66 @@ ownedBase = function( bases ) {
 	return -1;
 }
 
-//create new orders for my units
+getMyBases = function(bases){
+	var myBases = [];
+	for( var i=0;i<bases.length; i++){
+		if(bases[i].allegiance == ID){
+			myBases.push(bases[i]);
+		}
+	}
+
+	return myBases;
+}
+
+farmingUnitsInBase = function(farmingUnits, base){
+
+	var count = 0;
+
+	for(var i=0;i<farmingUnits.length; i++){
+		if(isUnitInBase(base, farmingUnits[i])){
+			count++;
+		}
+	}
+
+	return count;
+}
+
+closestOpenBase = function(bases,unit){
+
+	dist = 9999999;
+	cBase = -1;
+	for(var i=0;i<bases.length;i++){
+		if(bases[i].allegiance < 0){
+			b_dist = Math.abs(bases[i].locx - unit.locx) + Math.abs(bases[i].locy - unit.locy);
+			if(b_dist < dist){
+				cBase = bases[i];
+				dist = b_dist;
+			}
+
+		}
+	}
+	return cBase;
+};
+
+
+unitIsExpanding = function(unit, expansionUnits) {
+
+	for(var i=0;i<expansionUnits.length;i++){
+		if(unit.id == expansionUnits[i].id)
+			return true;
+	}
+	return false;
+};
+
+
+unitIsFarming = function (unit, farmingUnits) {
+
+	for(var i=0;i<farmingUnits.length;i++){
+		if(unit.id == farmingUnits[i].id)
+			return true;
+	}
+	return false;
+};
 dataResponse = function ( ev ) {
 	//randomly assign a direction to each unit, and attempt to farm
 	orders = [];
@@ -142,131 +201,66 @@ dataResponse = function ( ev ) {
 	u = ev.data["Data"].units;
 
 	myGuys = [];
+	myBases = [];
 	enemies = [];
-	team1 = [];
-	team2 = [];
-	team3 = [];
+	attackSquads = [];
+	farmingUnits = [];
+	expansionUnits = [];
 
-	b = ev.data["Data"].bases;
-
-	if (!(foundHomeBase))
-	{
-		homeBase = ownedBase(b);
-		foundHomeBase = true;
-	}
-
-	var count = 0;
+	bases = ev.data["Data"].bases;
+	myBases = getMyBases(bases);
 
 	for( var i = 0; i < u.length; i++ ) {
 		if( u[i].allegiance == this.ID ) {
-			myGuys.push( u[i] );
-			if(team1.length < 3){
-				
-				team1.push(u[i])				
-			}
-			else{
-				
-				team2.push(u[i])
-			}
-		} else {
+			myGuys.push(u[i]);
+		}
+		else {
 			enemies.push( u[i] );
 		}
 	} 
 
+	for(var i=0;i<myGuys.length;i++){
 
+		var unit = myGuys[i];
 
-	
-	//select a target if I don't currently have one
-	while( base == -1 || b[base].allegiance == ID) {
-		base = Math.floor(Math.random() * b.length);
-	}
-
-	myBases = ownedBase(b);
-
-	if(team2.length > 0){
-
-		var mark = closetEnemy( team2[0], enemies );
-	}
-
-	/* If enemy inside base attack */
-	if (isEnemyInBase(homeBase, enemies))
-	{
-		for( var i = 0; i < team1.length; i++ ) {
-
-			var e = closetEnemy(team1[i], enemies);
-			var dir = getDir( team1[i].locx, team1[i].locy, e.locx, e.locy );
-
-			//If enemy is close attack, else dash towards it
-			if(enemyInRange(team1[i],e)){
-				orders.push( {"unitID" : team1[i].id, "move" : "", "dash" : "", "attack" : e.id, "farm" : false} );
+		/* Farm and Expand code */
+		for(var j=0;j<myBases.length;j++){
+			//Set farmers
+			if(farmingUnitsInBase(farmingUnits,myBases[j])<2 && isUnitInBase(myBases[j],unit)){
+				farmingUnits.push(unit);
+				orders.push({"unitID" : unit.id, "move" : "", "dash" : "", "attack" : "", "farm" : true});
 			}
-			else {
-				orders.push({"unitID": team1[i].id, "move": "", "dash": dir, "attack": e.id, "farm": false});
-			}
-		}
-
-		//attack any units in range, or move towards target
-		for( var i = 0; i < team2.length; i++ ) {
-			
-			
-			if( mark > 0 ) {
-				orders.push( {"unitID" : team2[i].id, "move" : "", "dash" : "", "attack" : mark.id, "farm" : false} );
-			} else {
-				var e = closetEnemy(team2[i],enemies);
-				var dir = getDir( team2[i].locx, team2[i].locy, e.locx, e.locy ); 
-				orders.push( {"unitID" : team2[i].id, "move" : dir, "dash" : dir, "attack" : "", "farm" : false} );
-			}
-		}
-	}
-	else if (myGuys.length > 6 || popMet)
-	{	
-		popMet = true
-
-		for( var i = 0; i < team1.length; i++ ) {
-				//IF not home go home
-				if(isUnitInBase(team1[i],homeBase)){					
-					var dir = getDir( team1[i].locx, team1[i].locy, homeBase.locx, homeBase.locy );
-					orders.push( {"unitID" : team1[i].id, "move" : "", "dash":dir,"attack" : "", "farm" : false} ); 
+			else if(farmingUnitsInBase(farmingUnits,myBases[j])>=2){
+				//TODO: Fix jitter when close to base
+				if(!unitIsFarming(unit,farmingUnits) && !unitIsExpanding(unit,expansionUnits)) {
+					cBase = closestOpenBase(bases, myGuys[i]);
+					if (cBase != -1) {
+						expansionUnits.push(unit);
+						if(isUnitInBase(cBase,unit)){
+							orders.push({"unitID" : unit.id, "move" : "", "dash" : "", "attack" : "", "farm" : true});
+						}
+						else {
+							dir = getDir(unit.locx, unit.locy, cBase.locx, cBase.locy);
+							orders.push({"unitID": unit.id, "move": dir, "dash": "", "attack": "", "farm": false});
+						}
+					}
+					else {
+						attackSquads.push(unit)
+					}
 				}
-				orders.push( {"unitID" : team1[i].id, "move" : "", "attack" : "", "dash":"", "farm" : true} );
-		 }
-		//attack any units in range, or move towards target
-		for( var i = 0; i < team2.length; i++ ) {
-			
-			
-			if( mark > 0 ) {
-				orders.push( {"unitID" : team2[i].id, "move" : "", "dash" : "", "attack" : mark.id, "farm" : false} );
-			} else {
-				var e = closetEnemy(team2[i],enemies);
-				var dir = getDir( team2[i].locx, team2[i].locy, e.locx, e.locy ); 
-				orders.push( {"unitID" : team2[i].id, "move" : dir, "dash" : dir, "attack" : "", "farm" : false} );
 			}
 		}
-
 	}
-	else
-	{	
-		for( var i = 0; i < u.length; i++ ) {
-			if( u[i] && u[i].allegiance == this.ID ) {
-				orders.push( {"unitID" : u[i].id, "move" :"", "attack" : "", "farm" : true} );
-			}
+	for(var i=0;i<attackSquads.length;i++) {
+		var unit = attackSquads[i];
+
+		if (enemyInRange(unit, enemies)) {
+			enemy = closetEnemy(unit,enemies);
+			orders.push({"unitID" : unit.id, "move" : dir, "dash" : "", "attack" : enemy, "farm" : false});
 		}
-
-
-		for( var i = 0; i < team1.length; i++ ) {
-				//IF not home go home
-				if(isUnitInBase(team1[i],homeBase)){
-					orders.push( {"unitID" : team1[i].id, "move" : "", "attack" : "", "farm" : true} );
-				}
-				else{
-					var dir = getDir( team1[i].locx, team1[i].locy, homeBase.locx, homeBase.locy ); 
-					orders.push( {"unitID" : team1[i].id, "move" : "", "dash":dir,"attack" : "", "farm" : false} );
-				}
-		 } 
-
 	}
 
-	console.log(orders);
+
 	//post message back to AI Manager	
 	postMessage( { "Orders" : orders } );		
 }
