@@ -1,7 +1,6 @@
 /*****************************************************************************************
- * Beta:
- * The drunken farmer.  Will move each unit in a random direction, and attempt to farm.
- * Will not try to defend itself.
+ * The goal of this AI is to quickly expand and group individuals for quick attack.
+ * Last Update: 01/17/2015
  * Contributed by: Daniel Kotowski & Michael McLean
  ****************************************************************************************/
 var max = 500;
@@ -61,17 +60,17 @@ closetEnemy = function(me, them){
 	dist = 0;
 
 	for( var i = 0;  i < them.length; i++ ) {
-		if( them[i].health <= 0 || them[i].id < 0) {
+		if (them[i].health <= 0 || them[i].id < 0) {
 			continue;
 		}
 		var x = me.locx - them[i].locx;
 		var y = me.locy - them[i].locy;
-		d =Math.sqrt( x*x + y*y);
-		if(ce == null){
+		d = Math.sqrt(x * x + y * y);
+		if (ce == null) {
 			ce = them[i];
 			dist = d;
 		}
-		else if(d < dist){
+		else if (d < dist) {
 			ce = them[i];
 			dist = d;
 		}
@@ -184,37 +183,26 @@ dataResponse = function ( ev ) {
 
 	myBases = ownedBase(b);
 
-	for( var i = 0; i < myBases.length; i++ ) {
-
-		/*
-			for( var i = 0; i < myGuys.length; i++ ) {
-			
-			var mark = enemyInRange( myGuys[i], enemies );
-			if( mark > 0 ) {
-				orders.push( {"unitID" : myGuys[i].id, "move" : "", "dash" : "", "attack" : mark, "farm" : false} );	
-			} else {
-				var dir = getDir( team2[i].locx, team2[i].locy, b[base].locx, b[base].locy ); 
-				orders.push( {"unitID" : myGuys[i].id, "move" : dir, "dash" : dir, "attack" : "", "farm" : false} );
-			}
-		
-		}*/
-		
-	}
-
 	if(team2.length > 0){
 
 		var mark = closetEnemy( team2[0], enemies );
 	}
 
-
+	/* If enemy inside base attack */
 	if (isEnemyInBase(homeBase, enemies))
 	{
 		for( var i = 0; i < team1.length; i++ ) {
+
 			var e = closetEnemy(team1[i], enemies);
-			var dir = getDir( team1[i].locx, team1[i].locy, e.locx, e.locy ); 
-			orders.push( {"unitID" : team1[i].id, "move" : "", "dash" : "", "attack" : e, "farm" : false} );
-			orders.push( {"unitID" : team1[i].id, "move" : dir, "dash" : dir, "attack" : "", "farm" : false} );
-			
+			var dir = getDir( team1[i].locx, team1[i].locy, e.locx, e.locy );
+
+			//If enemy is close attack, else dash towards it
+			if(enemyInRange(team1[i],e)){
+				orders.push( {"unitID" : team1[i].id, "move" : "", "dash" : "", "attack" : e.id, "farm" : false} );
+			}
+			else {
+				orders.push({"unitID": team1[i].id, "move": "", "dash": dir, "attack": e.id, "farm": false});
+			}
 		}
 
 		//attack any units in range, or move towards target
@@ -222,7 +210,7 @@ dataResponse = function ( ev ) {
 			
 			
 			if( mark > 0 ) {
-				orders.push( {"unitID" : team2[i].id, "move" : "", "dash" : "", "attack" : mark, "farm" : false} );	
+				orders.push( {"unitID" : team2[i].id, "move" : "", "dash" : "", "attack" : mark.id, "farm" : false} );
 			} else {
 				var e = closetEnemy(team2[i],enemies);
 				var dir = getDir( team2[i].locx, team2[i].locy, e.locx, e.locy ); 
@@ -247,7 +235,7 @@ dataResponse = function ( ev ) {
 			
 			
 			if( mark > 0 ) {
-				orders.push( {"unitID" : team2[i].id, "move" : "", "dash" : "", "attack" : mark, "farm" : false} );	
+				orders.push( {"unitID" : team2[i].id, "move" : "", "dash" : "", "attack" : mark.id, "farm" : false} );
 			} else {
 				var e = closetEnemy(team2[i],enemies);
 				var dir = getDir( team2[i].locx, team2[i].locy, e.locx, e.locy ); 
@@ -277,7 +265,8 @@ dataResponse = function ( ev ) {
 		 } 
 
 	}
-	
+
+	console.log(orders);
 	//post message back to AI Manager	
 	postMessage( { "Orders" : orders } );		
 }
