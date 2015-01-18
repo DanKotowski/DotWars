@@ -254,9 +254,10 @@ dataResponse = function ( ev ) {
 	for(var i=0;i<attackSquads.length;i++) {
 		var unit = attackSquads[i];
 
+		//TODO: Finish implementing attack behaviour
 		if (enemyInRange(unit, enemies)) {
 			enemy = closetEnemy(unit,enemies);
-			orders.push({"unitID" : unit.id, "move" : dir, "dash" : "", "attack" : enemy, "farm" : false});
+			orders.push({"unitID" : unit.id, "move" : dir, "dash" : "", "attack" : enemy.id, "farm" : false});
 		}
 	}
 
