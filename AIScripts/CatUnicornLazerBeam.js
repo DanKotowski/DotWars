@@ -219,34 +219,35 @@ dataResponse = function ( ev ) {
 		}
 	} 
 
-	for(var i=0;i<myGuys.length;i++){
+	for(var i=0;i<myGuys.length;i++) {
 
 		var unit = myGuys[i];
 
 		/* Farm and Expand code */
-		for(var j=0;j<myBases.length;j++){
+		for (var j = 0; j < myBases.length; j++) {
 			//Set farmers
-			if(farmingUnitsInBase(farmingUnits,myBases[j])<2 && isUnitInBase(myBases[j],unit)){
+			if (farmingUnitsInBase(farmingUnits, myBases[j]) < 2 && isUnitInBase(myBases[j], unit)) {
 				farmingUnits.push(unit);
-				orders.push({"unitID" : unit.id, "move" : "", "dash" : "", "attack" : "", "farm" : true});
+				orders.push({"unitID": unit.id, "move": "", "dash": "", "attack": "", "farm": true});
 			}
-			else if(farmingUnitsInBase(farmingUnits,myBases[j])>=2){
-				//TODO: Fix jitter when close to base
-				if(!unitIsFarming(unit,farmingUnits) && !unitIsExpanding(unit,expansionUnits)) {
-					cBase = closestOpenBase(bases, myGuys[i]);
-					if (cBase != -1) {
-						expansionUnits.push(unit);
-						if(isUnitInBase(cBase,unit)){
-							orders.push({"unitID" : unit.id, "move" : "", "dash" : "", "attack" : "", "farm" : true});
-						}
-						else {
-							dir = getDir(unit.locx, unit.locy, cBase.locx, cBase.locy);
-							orders.push({"unitID": unit.id, "move": dir, "dash": "", "attack": "", "farm": false});
-						}
+
+		}
+		if (!unitIsFarming(unit, farmingUnits)) {
+			//TODO: Fix jitter when close to base
+			if (!unitIsFarming(unit, farmingUnits) && !unitIsExpanding(unit, expansionUnits)) {
+				cBase = closestOpenBase(bases, unit);
+				if (cBase != -1) {
+					expansionUnits.push(unit);
+					if (isUnitInBase(cBase, unit)) {
+						orders.push({"unitID": unit.id, "move": "", "dash": "", "attack": "", "farm": true});
 					}
 					else {
-						attackSquads.push(unit)
+						dir = getDir(unit.locx, unit.locy, cBase.locx, cBase.locy);
+						orders.push({"unitID": unit.id, "move": dir, "dash": "", "attack": "", "farm": false});
 					}
+				}
+				else {
+					attackSquads.push(unit)
 				}
 			}
 		}
