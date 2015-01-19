@@ -1,7 +1,7 @@
 /*****************************************************************************************
  * Config Settings
  ****************************************************************************************/
-var fps = 40;
+var fps = 50;
 var delay = 1000/fps;
 var gameLength = 3000;
 
@@ -15,7 +15,6 @@ var playerList = ["Alpha", "Beta","Gamma","CatUnicornLazerBeam"];
 var playerColors = ["#FF0000", "#00FF00", "#0000FF", "#FF00FF"];
 var startingNumberOfUnits = 4;
 
-var mapList = [];
 var maxUnitsPerBaseOwned = 10;
 
 /*****************************************************************************************
@@ -25,38 +24,44 @@ var points = [];
 var bases = [];
 var units = [];
 var IDctr = 1;
+var aiManager = {};
+var gameInterval = {};
 
 /*****************************************************************************************
  * Gameplay Logic
  ****************************************************************************************/
 //initialize points array
-var scorePanel = document.getElementById('scorePanel');
-for( var i = 0; i < players; i++ ){
-	points[i]=0;
-	scorePanel.innerHTML = scorePanel.innerHTML + 
-		'<div id="player'+ i +'score" style="color:'+playerColors[i]+';" class="playerScoreTile glossy"></div>';
-}
+function InitializeGame() {
+	points = [];
+	bases = [];
+	units = [];
+	IDctr = 1;
 
-//initialize randomized players list
-var gamePlayers = shuffle( playerList ).slice(0, players);
-						
-//Load Map
-var mg = new MapGenerator( players );
-var bases = mg.Generate();
-			
-//Create Units
-units[0] = new Unit( -1, -1, -1, -1 ); // dummy unit
-for( var i = 0; i < players; i++ ) {
-	bases[i].SetAllegiance( i );
-	for( var j = 0; j < startingNumberOfUnits; j++ ) {
-		units[IDctr] = ( new Unit( bases[i].locx, bases[i].locy, i, IDctr ) );
-		IDctr++;
+	var scorePanel = document.getElementById('scorePanel');
+	scorePanel.innerHTML = "";
+	for( var i = 0; i < players; i++ ){
+		points[i]=0;
+		scorePanel.innerHTML = scorePanel.innerHTML + 
+			'<div id="player'+ i +'score" style="color:'+playerColors[i]+';" class="playerScoreTile glossy"></div>';
 	}
-}
+						
+	//Load Map
+	var mg = new MapGenerator( players );
+	bases = mg.Generate();
+			
+	//Create Units
+	units[0] = new Unit( -1, -1, -1, -1 ); // dummy unit
+	for( var i = 0; i < players; i++ ) {
+		bases[i].SetAllegiance( i );
+		for( var j = 0; j < startingNumberOfUnits; j++ ) {
+			units[IDctr] = ( new Unit( bases[i].locx, bases[i].locy, i, IDctr ) );
+			IDctr++;
+		}
+	}
+};
 			
 //Handler for AI messages and unit orders
-var aiManager = new Worker('AIMANAGER.js');
-aiManager.onmessage = function ( ev ) {
+function AIManagerOnMessage( ev ) {
 	var orders = [];
 	var ordered = [];
 	//loop through orders
@@ -118,8 +123,7 @@ aiManager.onmessage = function ( ev ) {
 			units[i].atkReload--;
 		}
 	}
-	
-}
+};
 
 /*****************************************************************************************
  * Gameplay Utility Functions
@@ -286,11 +290,11 @@ function drawCanvas() {
 	}
 };
 
-function drawScore ( t ) {
+function drawScore ( t, gamePlayers ) {
 	if( t % 10 != 0 ) {
 		return;
 	}
-	updateTimer(timer);
+	updateTimer(t);
 	//determine ranking
 	var rank = [];
 	for( var i = 0; i < points.length; i++ ) {
@@ -328,24 +332,42 @@ function updateTimer( t ) {
 /*****************************************************************************************
  * Gameplay
  ****************************************************************************************/
-//Load the AI scripts for this scrimmage
-aiManager.postMessage( { "LoadAI" : gamePlayers } );
 
-//initialize postMessage data for AI Manager
-var gameData = {};
-gameData["bases"] = bases;
-gameData["units"] = units;	
-var timer = gameLength;	
-			
-//Main data and animation loop	
-var gameInterval = setInterval( function () {
-	if ( timer <= 0 ) {
+function StartGame() {
+	if( aiManager.terminate ) {
+		aiManager.postMessage( { "Terminate" : "" } );
+		aiManager = {};
+	}
+	if( gameInterval ) {
 		clearInterval( gameInterval );
 	}
-	checkBases();
-	drawCanvas();
-	drawScore(timer);
-	aiManager.postMessage( { "Data" : gameData } );
-	timer--;
-}, delay);
 
+	//initialize randomized players list
+	var gamePlayers = shuffle( playerList ).slice(0, players);
+
+	InitializeGame();
+
+	//Load the AI scripts for this scrimmage
+	aiManager = new Worker('AIMANAGER.js');
+	aiManager.onmessage = AIManagerOnMessage;
+	aiManager.postMessage( { "LoadAI" : gamePlayers } );
+
+	//initialize postMessage data for AI Manager
+	var gameData = {};
+	gameData["bases"] = bases;
+	gameData["units"] = units;	
+	var timer = gameLength;	
+			
+	//Main data and animation loop	
+	gameInterval = setInterval( function () {
+		if ( timer <= 0 ) {
+			aiManager.postMessage( { "Terminate" : "" } );
+			clearInterval( gameInterval );
+		}
+		checkBases();
+		drawCanvas();
+		drawScore(timer, gamePlayers);
+		aiManager.postMessage( { "Data" : gameData } );
+		timer--;
+	}, delay);
+}
