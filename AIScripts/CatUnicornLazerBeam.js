@@ -54,33 +54,30 @@ enemyInRange = function( me, them ) {
 	return target;
 };
 
-closetEnemy = function(me, them){
-	
+
+closestEnemy = function(me, them){
 	ce = null;
 	dist = 0;
+	if(me != null) {
+		for (var i = 0; i < them.lenght; i++) {
+			if (them[i].health > 0 && them[i].id > 0 && them[i].allegiance != ID) {
 
-	for( var i = 0;  i < them.length; i++ ) {
-		if (them[i].health <= 0 || them[i].id < 0) {
-			continue;
-		}
-		var x = me.locx - them[i].locx;
-		var y = me.locy - them[i].locy;
-		d = Math.sqrt(x * x + y * y);
-		if (ce == null) {
-			ce = them[i];
-			dist = d;
-		}
-		else if (d < dist) {
-			ce = them[i];
-			dist = d;
+				var x = me.locx - them[i].locx;
+				var y = me.locy - them[i].locy;
+				d = Math.abs(me.locx - me.locx) + Math.abs(them[i].locy - them.locy);
+				if (ce == null) {
+					ce = them[i];
+					dist = d;
+				}
+				else if (d < dist) {
+					ce = them[i];
+					dist = d;
+				}
+			}
 		}
 	}
-
 	return ce;
-
-};
-
-
+}
 
 //identify the direction i should move in to get to a target destination
 getDir = function( x1, y1, x2, y2 ) {
@@ -245,7 +242,15 @@ dataResponse = function ( ev ) {
 
 			//Defend base
 			if(isUnitInBase(myBases[j], unit) && isEnemyInBase(myBases[j],enemies)){
+				enemy = closestEnemy(unit,enemies);
 
+				if (enemyInRange(unit, enemies)>=0) {
+					orders.push({"unitID": unit.id, "move":"", "dash": "", "attack": enemy.id, "farm": false});
+				}
+				else {
+					dir = getDir(unit.locx, unit.locy, enemy.locx, enemy.locy);
+					orders.push({"unitID": unit.id, "move": "", "dash": dir, "attack": "", "farm": false});
+				}
 			}
 			else{
 				//Set farmers
@@ -264,7 +269,7 @@ dataResponse = function ( ev ) {
 				}
 				else {
 					dir = getDir(unit.locx, unit.locy, cBase.locx, cBase.locy);
-					orders.push({"unitID": unit.id, "move": dir, "dash": "", "attack": "", "farm": false});
+					orders.push({"unitID": unit.id, "move":"", "dash": dir, "attack": "", "farm": false});
 				}
 			}
 			else {
@@ -275,16 +280,15 @@ dataResponse = function ( ev ) {
 	for (var i = 0; i < attackSquads.length; i++) {
 		var unit = attackSquads[i];
 
-		mark = closetEnemy(me,enemies);
-
-
 		//TODO: Finish implementing attack behaviour
 		if (enemyInRange(unit, enemies)>=0) {
-			enemy = closetEnemy(unit, enemies);
+			enemy = closestEnemy(unit, enemies);
 			orders.push({"unitID": unit.id, "move":"", "dash": "", "attack": enemy.id, "farm": false});
 		}
 		else{
-			orders.push({"unitID": unit.id, "move":"", "dash": mark.id, "attack": "", "farm": false});
+			enemy = closestEnemy(unit,enemies);
+			dir = getDir(unit.locx, unit.locy, enemy.locx, enemy.locy);
+			orders.push({"unitID": unit.id, "move":"", "dash": dir, "attack": "", "farm": false});
 		}
 	}
 
