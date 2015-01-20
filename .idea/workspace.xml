@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="af0b227c-564a-452c-b0eb-ad57d30bbf6b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AIScripts/CatUnicornLazerBeam.js" afterPath="$PROJECT_DIR$/AIScripts/CatUnicornLazerBeam.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AIScripts/DynamicTransit.js" afterPath="$PROJECT_DIR$/AIScripts/DynamicTransit.js" />
     </list>
     <ignored path="DotWars.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,8 +30,18 @@
       <file leaf-file-name="CatUnicornLazerBeam.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/AIScripts/CatUnicornLazerBeam.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.27971187" vertical-offset="3112" max-vertical-offset="6090">
-              <caret line="223" column="35" selection-start-line="223" selection-start-column="35" selection-end-line="223" selection-end-column="35" />
+            <state vertical-scroll-proportion="0.30232558" vertical-offset="4495" max-vertical-offset="6285">
+              <caret line="317" column="16" selection-start-line="317" selection-start-column="16" selection-end-line="317" selection-end-column="16" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Gamma.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/AIScripts/Gamma.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="1890">
+              <caret line="43" column="19" selection-start-line="43" selection-start-column="19" selection-end-line="43" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -49,8 +60,8 @@
       <file leaf-file-name="DynamicTransit.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/AIScripts/DynamicTransit.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-11.111111" vertical-offset="2130" max-vertical-offset="4710">
-              <caret line="162" column="9" selection-start-line="162" selection-start-column="9" selection-end-line="162" selection-end-column="9" />
+            <state vertical-scroll-proportion="-25.296297" vertical-offset="3877" max-vertical-offset="4710">
+              <caret line="304" column="0" selection-start-line="304" selection-start-column="0" selection-end-line="304" selection-end-column="0" />
               <folding>
                 <element signature="n#!!doc" expanded="true" />
               </folding>
@@ -349,14 +360,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/AIScripts/Gamma.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3145258" vertical-offset="878" max-vertical-offset="1890">
-          <caret line="76" column="28" selection-start-line="76" selection-start-column="24" selection-end-line="76" selection-end-column="28" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/AIScripts/Beta.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="780">
@@ -389,16 +392,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/AIScripts/DynamicTransit.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-11.111111" vertical-offset="2130" max-vertical-offset="4710">
-          <caret line="162" column="9" selection-start-line="162" selection-start-column="9" selection-end-line="162" selection-end-column="9" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/GAME.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-3.0370371" vertical-offset="848" max-vertical-offset="5685">
@@ -415,10 +408,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/AIScripts/Gamma.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="150" max-vertical-offset="1890">
+          <caret line="43" column="19" selection-start-line="43" selection-start-column="19" selection-end-line="43" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/AIScripts/DynamicTransit.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-25.296297" vertical-offset="3877" max-vertical-offset="4710">
+          <caret line="304" column="0" selection-start-line="304" selection-start-column="0" selection-end-line="304" selection-end-column="0" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/AIScripts/CatUnicornLazerBeam.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.27971187" vertical-offset="3112" max-vertical-offset="6090">
-          <caret line="223" column="35" selection-start-line="223" selection-start-column="35" selection-end-line="223" selection-end-column="35" />
+        <state vertical-scroll-proportion="0.30232558" vertical-offset="4495" max-vertical-offset="6285">
+          <caret line="317" column="16" selection-start-line="317" selection-start-column="16" selection-end-line="317" selection-end-column="16" />
           <folding />
         </state>
       </provider>

@@ -26,7 +26,6 @@ onmessage = function ( ev ) {
 				processUnits(ev.data["Data"].units);
 				processBases(ev.data["Data"].bases);
 
-				console.log(Units.enemies);
 				//strategy response
 				dataResponse();
 		}
@@ -231,10 +230,6 @@ processUnits = function(units){
 
 }
 
-
-
-
-
 processBases = function(bases){
 
 	p_bases =  {
@@ -303,16 +298,16 @@ baseSort = function(b1,b2){
 
 
 orderAttack = function(unit,enemy){
-	return {"unitID": unit.id, "move": "", "dash":"", "attack":enemy.id, "farm": false};
+	return {"unitID": unit, "move": "", "dash":"", "attack":enemy, "farm": false};
 }
 
 orderFarm = function(unit){
-	return 	{"unitID": unit.id, "move":"", "dash":"", "attack": "", "farm": true};
+	return 	{"unitID": unit, "move":"", "dash":"", "attack": "", "farm": true};
 }
 
 orderMove = function(unit,dir){
 
-	return {"unitID": unit.id, "move": "", "dash": dir, "attack": "", "farm": false};
+	return {"unitID": unit, "move": "", "dash": dir, "attack": "", "farm": false};
 }
 
 
@@ -321,15 +316,33 @@ dataResponse = function () {
 
 	//TODO: Rework logic to reflect pre-processed and sorted data
 	orders = [];
-	unitsFarming = 0;
-	unitsAttacking = 0;
+	unitsExpanding = 0;
 
 	//Go through units and give them an order
 	for (var i = 0; i < Units.mine.length; i++) {
 		var unit = Units.mine[i];
 
-		orders.push(orderFarm(unit));
+		mark = enemyInRange(unit,Units.enemies);
+		if(mark > 0){
+			orders.push(orderAttack(unit.id,mark));
+		}else{
 
+			//Inital population expand
+			if(Bases.mine.length < 2){
+				if(unitsExpanding < 2 && Bases.open.length > 0)
+				{
+					var openBase = Bases.open[0];
+					console.log(openBase);
+					dir = getDir(unit.x,unit.y,openBase.locx,openBase.locy);
+					orders.push(orderMove(unit.id,dir));
+					unitsExpanding ++;
+				}
+			}
+			//Else Farm
+			else {
+				orders.push(orderFarm(unit.id));
+			}
+		}
 	}
 
 
@@ -397,5 +410,5 @@ dataResponse = function () {
 	}
 */
 	//post message back to AI Manager	
-	postMessage( { "Orders" : orders } );		
+	postMessage( { "Orders" : orders } );
 }
