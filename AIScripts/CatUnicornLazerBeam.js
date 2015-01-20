@@ -3,15 +3,12 @@
  * Last Update: 01/17/2015
  * Contributed by: Daniel Kotowski & Michael McLean
  ****************************************************************************************/
-var max = 500;
-var min = 1500;
-var delay = Math.floor(Math.random() * (max - min + 1)) + min;;
 var msg = [];
-var popMet = false
 var ID;
-var homeBase;
-var foundHomeBase = false;
-var base = -1;
+var Units;
+var Bases;
+
+
 
 
 onmessage = function ( ev ) {
@@ -25,8 +22,12 @@ onmessage = function ( ev ) {
 				}
 				break;
 			default:
+				//pre-process entities
+				processUnits(ev.data["Data"].units);
+				processBases(ev.data["Data"].bases);
+
 				//strategy response
-				dataResponse( ev );
+				dataResponse();
 		}
 	}	
 };
@@ -207,37 +208,139 @@ unitIsFarming = function (unit, farmingUnits) {
 	}
 	return false;
 };
-dataResponse = function ( ev ) {
-	//randomly assign a direction to each unit, and attempt to farm
-	orders = [];
-	dirs = ["up", "down", "left", "right", "in"];
-	u = ev.data["Data"].units;
 
-	myGuys = [];
-	myBases = [];
-	enemies = [];
-	attackSquads = [];
-	farmingUnits = [];
-	expansionUnits = [];
+processUnits = function(units){
+	p_units = {
+		mine:[],
+		enemies:[]
+	}
 
-	//TODO: Pre process bases and enemies
-	bases = ev.data["Data"].bases;
-	myBases = getMyBases(bases);
-
-	for (var i = 0; i < u.length; i++) {
-		if (u[i].allegiance == this.ID) {
-			myGuys.push(u[i]);
+	for(var i=0;i<units.length;i++){
+		unit = units[i];
+		if(unit.allegiance == ID){
+			p_units.mine.push(unit);
 		}
-		else {
-			enemies.push(u[i]);
+		else if(unit.health > 0){
+			p_units.enemies.push(unit);
 		}
 	}
 
-	for (var i = 0; i < myGuys.length; i++) {
+	Units = p_units;
+	p_units.enemies.sort(enemySort);
+
+}
+
+
+
+
+
+processBases = function(bases){
+
+	p_bases =  {
+		open:[],
+		mine:[],
+		enemies:[]
+	};
+
+	for(var i=0;i<bases.length;i++){
+
+		base = bases[i];
+		if(base.allegiance == ID){
+			p_bases.mine.push(base);
+		}else if(base.allegiance < 0){
+			p_bases.open.push(base);
+		}else{
+			p_bases.enemies.push(base);
+		}
+	}
+
+	Bases =  p_bases;
+	Bases.open.sort(baseSort);
+	Bases.enemies.sort(baseSort);
+
+}
+
+/* Consistent Distance Fucntion */
+distance = function(x1,y1,x2,y2){
+
+	deltaX = (x1-x2);
+	deltaY = (y1-y2);
+
+	return(Math.sqrt((deltaX*deltaX) + (deltaY*deltaY)));
+}
+
+
+enemyRating = function(e){
+	ret = 0;
+
+	for(var i=0;i<Units.mine.length;i++){
+		unit = Units.mine[i];
+		ret += distance(e.locx, e.locy,unit.locx,unit.locy)*e.health;
+	}
+
+	return ret;
+}
+
+
+enemySort = function(e1,e2){
+	return enemyRating(e1) - enemyRating(e2);
+}
+
+baseDistanceFromUnits = function(b){
+	ret = 0;
+	for(var i=0;i<Units.mine.length;i++){
+		unit = Units.mine[i];
+		ret += distance(b.locx, b.locy,unit.locx, unit.locy);
+	}
+	return ret;
+}
+
+
+baseSort = function(b1,b2){
+	return baseDistanceFromUnits(b1) -  baseDistanceFromUnits(b2);
+}
+
+
+orderAttack = function(unit,enemy){
+	return {"unitID": unit.id, "move": "", "dash":"", "attack":enemy.id, "farm": false};
+}
+
+orderFarm = function(unit){
+	return 	{"unitID": unit.id, "move":"", "dash":"", "attack": "", "farm": true};
+}
+
+orderMove = function(unit,dir){
+
+	return {"unitID": unit.id, "move": "", "dash": dir, "attack": "", "farm": false};
+}
+
+
+
+dataResponse = function () {
+
+	//TODO: Rework logic to reflect pre-processed and sorted data
+	orders = [];
+	unitsFarming = 0;
+	unitsAttacking = 0;
+
+	//Go through units and give them an order
+	for (var i = 0; i < Units.mine.length; i++) {
+		var unit = Units.mine[i];
+		
+		orders.push(orderFarm(unit));
+
+	}
+
+
+
+
+
+
+	/*for (var i = 0; i < myGuys.length; i++) {
 
 		var unit = myGuys[i];
 
-		/* Farm and Expand code */
+		*//* Farm and Expand code *//*
 		for (var j = 0; j < myBases.length; j++) {
 
 			//Defend base
@@ -291,7 +394,7 @@ dataResponse = function ( ev ) {
 			orders.push({"unitID": unit.id, "move":"", "dash": dir, "attack": "", "farm": false});
 		}
 	}
-
+*/
 	//post message back to AI Manager	
 	postMessage( { "Orders" : orders } );		
 }
