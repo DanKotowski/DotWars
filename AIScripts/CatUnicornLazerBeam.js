@@ -26,6 +26,7 @@ onmessage = function ( ev ) {
 				processUnits(ev.data["Data"].units);
 				processBases(ev.data["Data"].bases);
 
+				console.log(Units.enemies);
 				//strategy response
 				dataResponse();
 		}
@@ -220,7 +221,7 @@ processUnits = function(units){
 		if(unit.allegiance == ID){
 			p_units.mine.push(unit);
 		}
-		else if(unit.health > 0){
+		else if(unit.health > 0 && unit.id > 0){
 			p_units.enemies.push(unit);
 		}
 	}
@@ -326,7 +327,7 @@ dataResponse = function () {
 	//Go through units and give them an order
 	for (var i = 0; i < Units.mine.length; i++) {
 		var unit = Units.mine[i];
-		
+
 		orders.push(orderFarm(unit));
 
 	}
