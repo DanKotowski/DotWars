@@ -84,6 +84,7 @@ closestEnemy = function(me, them){
 getDir = function( x1, y1, x2, y2 ) {
 	var w = x1 - x2;
 	var h = y1 - y2;
+
 	if( Math.abs( w ) > Math.abs( h ) ){
 		if( w < 0 ) {
 			return "right";
@@ -243,13 +244,12 @@ processBases = function(bases){
 		base = bases[i];
 		if(base.allegiance == ID){
 			p_bases.mine.push(base);
-		}else if(base.allegiance < 0){
+		}else if(base.allegiance == -1){
 			p_bases.open.push(base);
 		}else{
 			p_bases.enemies.push(base);
 		}
 	}
-
 	Bases =  p_bases;
 	Bases.open.sort(baseSort);
 	Bases.enemies.sort(baseSort);
@@ -282,12 +282,16 @@ enemySort = function(e1,e2){
 	return enemyRating(e1) - enemyRating(e2);
 }
 
+//Distance from owned base maybe
 baseDistanceFromUnits = function(b){
 	ret = 0;
-	for(var i=0;i<Units.mine.length;i++){
+	/*for(var i=0;i<Units.mine.length;i++){
 		unit = Units.mine[i];
-		ret += distance(b.locx, b.locy,unit.locx, unit.locy);
-	}
+		ret += distance(unit.locx, unit.locy,b.locx, b.locy);
+	}*/
+	base = Bases.mine[0];
+	ret = distance(base.locx,base.locy, b.locx, b.locy);
+
 	return ret;
 }
 
@@ -323,92 +327,25 @@ dataResponse = function () {
 		var unit = Units.mine[i];
 
 		mark = enemyInRange(unit,Units.enemies);
+		//Always defend yourself don't be stupid
 		if(mark > 0){
 			orders.push(orderAttack(unit.id,mark));
 		}else{
 
-			//Inital population expand
-			if(Bases.mine.length < 2){
-				if(unitsExpanding < 2 && Bases.open.length > 0)
-				{
-					var openBase = Bases.open[0];
-					console.log(openBase);
-					dir = getDir(unit.x,unit.y,openBase.locx,openBase.locy);
-					orders.push(orderMove(unit.id,dir));
-					unitsExpanding ++;
-				}
+			if(Bases.open.length > 0 && unitsExpanding < 2){
+				//Closest open base
+				var openBase = Bases.open[0];
+				dir = getDir(unit.locx,unit.locy,openBase.locx,openBase.locy);
+				orders.push(orderMove(unit.id,dir));
+				unitsExpanding ++;
 			}
-			//Else Farm
+			 //Else Farm
 			else {
 				orders.push(orderFarm(unit.id));
 			}
 		}
 	}
 
-
-
-
-
-
-	/*for (var i = 0; i < myGuys.length; i++) {
-
-		var unit = myGuys[i];
-
-		*//* Farm and Expand code *//*
-		for (var j = 0; j < myBases.length; j++) {
-
-			//Defend base
-			if(isUnitInBase(myBases[j], unit) && isEnemyInBase(myBases[j],enemies)){
-				enemy = closestEnemy(unit,enemies);
-
-				if (enemyInRange(unit, enemies)>=0) {
-					orders.push({"unitID": unit.id, "move":"", "dash": "", "attack": enemy.id, "farm": false});
-				}
-				else {
-					dir = getDir(unit.locx, unit.locy, enemy.locx, enemy.locy);
-					orders.push({"unitID": unit.id, "move": "", "dash": dir, "attack": "", "farm": false});
-				}
-			}
-			else{
-				//Set farmers
-				if (farmingUnitsInBase(farmingUnits, myBases[j]) < 2 && isUnitInBase(myBases[j], unit)) {
-					farmingUnits.push(unit);
-					orders.push({"unitID": unit.id, "move": "", "dash": "", "attack": "", "farm": true});
-				}
-			}
-		}
-		if (!unitIsFarming(unit, farmingUnits) && !unitIsExpanding(unit, expansionUnits)) {
-			cBase = closestOpenBase(bases, unit);
-			if (cBase != -1) {
-				expansionUnits.push(unit);
-				if (isUnitInBase(cBase, unit)) {
-					orders.push({"unitID": unit.id, "move": "", "dash": "", "attack": "", "farm": true});
-				}
-				else {
-					dir = getDir(unit.locx, unit.locy, cBase.locx, cBase.locy);
-					orders.push({"unitID": unit.id, "move":"", "dash": dir, "attack": "", "farm": false});
-				}
-			}
-			else {
-				attackSquads.push(unit)
-			}
-		}
-	}
-	for (var i = 0; i < attackSquads.length; i++) {
-		var unit = attackSquads[i];
-
-		//TODO: Finish implementing attack behaviour
-		if (enemyInRange(unit, enemies)>=0) {
-			enemy = closestEnemy(unit, enemies);
-			orders.push({"unitID": unit.id, "move":"", "dash": "", "attack": enemy.id, "farm": false});
-		}
-		else{
-			enemy = closestEnemy(unit,enemies);
-			dir = getDir(unit.locx, unit.locy, enemy.locx, enemy.locy);
-			orders.push({"unitID": unit.id, "move":"", "dash": dir, "attack": "", "farm": false});
-		}
-	}
-*/
 	//post message back to AI Manager	
 	postMessage( { "Orders" : orders } );
 }
