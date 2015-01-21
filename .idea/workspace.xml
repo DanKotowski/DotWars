@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="af0b227c-564a-452c-b0eb-ad57d30bbf6b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AIScripts/CatUnicornLazerBeam.js" afterPath="$PROJECT_DIR$/AIScripts/CatUnicornLazerBeam.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GAME.js" afterPath="$PROJECT_DIR$/GAME.js" />
     </list>
     <ignored path="DotWars.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -30,8 +29,8 @@
       <file leaf-file-name="CatUnicornLazerBeam.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/AIScripts/CatUnicornLazerBeam.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.14405762" vertical-offset="3585" max-vertical-offset="5055">
-              <caret line="247" column="29" selection-start-line="247" selection-start-column="29" selection-end-line="247" selection-end-column="29" />
+            <state vertical-scroll-proportion="0.3517407" vertical-offset="4402" max-vertical-offset="5355">
+              <caret line="313" column="38" selection-start-line="313" selection-start-column="38" selection-end-line="313" selection-end-column="38" />
               <folding />
             </state>
           </provider>
@@ -454,8 +453,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/AIScripts/CatUnicornLazerBeam.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.14405762" vertical-offset="3585" max-vertical-offset="5055">
-          <caret line="247" column="29" selection-start-line="247" selection-start-column="29" selection-end-line="247" selection-end-column="29" />
+        <state vertical-scroll-proportion="0.3517407" vertical-offset="4402" max-vertical-offset="5355">
+          <caret line="313" column="38" selection-start-line="313" selection-start-column="38" selection-end-line="313" selection-end-column="38" />
           <folding />
         </state>
       </provider>

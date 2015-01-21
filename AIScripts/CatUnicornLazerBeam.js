@@ -233,6 +233,25 @@ enemyRating = function(e){
 	return ret;
 }
 
+findClosestBase = function(unit){
+
+	cBase = Bases.mine[0];
+	dist = distance(unit.locx,unit.locy,cBase.locx,cBase.locy);
+
+	for(var i=1;i<Bases.mine.length;i++){
+		base = Bases.mine[i];
+		n_dist = distance(unit.locx,unit.locy,cBase.locx,cBase.locy);
+		if(n_dist < dist){
+			cBase = base;
+			dist = n_dist;
+		}
+	}
+
+	return cBase;
+}
+
+
+
 
 enemySort = function(e1,e2){
 	return enemyRating(e1) - enemyRating(e2);
@@ -292,7 +311,7 @@ dataResponse = function () {
 		}else{
 
 			factor = 3*Bases.mine.length;
-
+			//TODO: Fix jitter problem
 			//If Base requires famer send
 			if(unitsFarming < factor) {
 
@@ -301,7 +320,7 @@ dataResponse = function () {
 					unitsFarming++;
 				}else{
 					//Go Home
-					closestBase = Bases.mine[0];
+					closestBase = findClosestBase(unit);
 					dir = getDir(unit.locx,unit.locy,closestBase.locx,closestBase.locy);
 					orders.push(orderMove(unit.id,dir));
 				}
@@ -310,6 +329,7 @@ dataResponse = function () {
 			//Expand
 			else {
 
+				//TODO: Make sure units don't chase indefently;
 				if(Bases.open.length == 0){
 					var enemy = Units.enemies[0];
 					dir = getDir(unit.locx,unit.locy,enemy.locx,enemy.locy);
