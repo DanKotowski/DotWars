@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="af0b227c-564a-452c-b0eb-ad57d30bbf6b" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/AIScripts/CatUnicornLazerBeam.js" afterPath="$PROJECT_DIR$/AIScripts/CatUnicornLazerBeam.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GAME.js" afterPath="$PROJECT_DIR$/GAME.js" />
     </list>
     <ignored path="DotWars.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -29,8 +30,18 @@
       <file leaf-file-name="CatUnicornLazerBeam.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/AIScripts/CatUnicornLazerBeam.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.76590633" vertical-offset="4507" max-vertical-offset="5340">
-              <caret line="343" column="48" selection-start-line="343" selection-start-column="48" selection-end-line="343" selection-end-column="48" />
+            <state vertical-scroll-proportion="0.14405762" vertical-offset="3585" max-vertical-offset="5055">
+              <caret line="247" column="29" selection-start-line="247" selection-start-column="29" selection-end-line="247" selection-end-column="29" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TheFriendlyOverlord.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/AIScripts/TheFriendlyOverlord.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="675" max-vertical-offset="3330">
+              <caret line="67" column="30" selection-start-line="67" selection-start-column="30" selection-end-line="67" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -49,8 +60,8 @@
       <file leaf-file-name="AIMANAGER.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/AIMANAGER.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="850" max-vertical-offset="1710">
-              <caret line="91" column="86" selection-start-line="91" selection-start-column="7" selection-end-line="91" selection-end-column="86" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="910" max-vertical-offset="1770">
+              <caret line="95" column="86" selection-start-line="95" selection-start-column="7" selection-end-line="95" selection-end-column="86" />
               <folding />
             </state>
           </provider>
@@ -71,9 +82,11 @@
       <file leaf-file-name="GAME.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GAME.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-3.0370371" vertical-offset="848" max-vertical-offset="5685">
-              <caret line="62" column="25" selection-start-line="62" selection-start-column="17" selection-end-line="62" selection-end-column="25" />
-              <folding />
+            <state vertical-scroll-proportion="-26.11111" vertical-offset="0" max-vertical-offset="5745">
+              <caret line="47" column="28" selection-start-line="47" selection-start-column="28" selection-end-line="47" selection-end-column="28" />
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -97,10 +110,10 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/AIScripts/Swag.js" />
-        <option value="$PROJECT_DIR$/GAME.js" />
         <option value="$PROJECT_DIR$/AIScripts/SecretSwarm.coffee" />
         <option value="$PROJECT_DIR$/AIScripts/SecretSwarm.js" />
         <option value="$PROJECT_DIR$/AIScripts/DynamicTransit.js" />
+        <option value="$PROJECT_DIR$/GAME.js" />
         <option value="$PROJECT_DIR$/AIScripts/CatUnicornLazerBeam.js" />
       </list>
     </option>
@@ -342,7 +355,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="195" max-vertical-offset="5685">
           <caret line="13" column="39" selection-start-line="13" selection-start-column="39" selection-end-line="13" selection-end-column="39" />
-          <folding />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -393,18 +408,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/GAME.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-3.0370371" vertical-offset="848" max-vertical-offset="5685">
-          <caret line="62" column="25" selection-start-line="62" selection-start-column="17" selection-end-line="62" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/AIMANAGER.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="850" max-vertical-offset="1710">
-          <caret line="91" column="86" selection-start-line="91" selection-start-column="7" selection-end-line="91" selection-end-column="86" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="910" max-vertical-offset="1770">
+          <caret line="95" column="86" selection-start-line="95" selection-start-column="7" selection-end-line="95" selection-end-column="86" />
           <folding />
         </state>
       </provider>
@@ -427,10 +434,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/AIScripts/TheFriendlyOverlord.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="675" max-vertical-offset="3330">
+          <caret line="67" column="30" selection-start-line="67" selection-start-column="30" selection-end-line="67" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GAME.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-26.11111" vertical-offset="0" max-vertical-offset="5745">
+          <caret line="47" column="28" selection-start-line="47" selection-start-column="28" selection-end-line="47" selection-end-column="28" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/AIScripts/CatUnicornLazerBeam.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.76590633" vertical-offset="4507" max-vertical-offset="5340">
-          <caret line="343" column="48" selection-start-line="343" selection-start-column="48" selection-end-line="343" selection-end-column="48" />
+        <state vertical-scroll-proportion="0.14405762" vertical-offset="3585" max-vertical-offset="5055">
+          <caret line="247" column="29" selection-start-line="247" selection-start-column="29" selection-end-line="247" selection-end-column="29" />
           <folding />
         </state>
       </provider>

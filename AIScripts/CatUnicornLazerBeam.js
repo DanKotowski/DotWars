@@ -56,29 +56,6 @@ enemyInRange = function( me, them ) {
 };
 
 
-closestEnemy = function(me, them){
-	ce = null;
-	dist = 0;
-	if(me != null) {
-		for (var i = 0; i < them.lenght; i++) {
-			if (them[i].health > 0 && them[i].id > 0 && them[i].allegiance != ID) {
-
-				var x = me.locx - them[i].locx;
-				var y = me.locy - them[i].locy;
-				d = Math.abs(me.locx - me.locx) + Math.abs(them[i].locy - them.locy);
-				if (ce == null) {
-					ce = them[i];
-					dist = d;
-				}
-				else if (d < dist) {
-					ce = them[i];
-					dist = d;
-				}
-			}
-		}
-	}
-	return ce;
-}
 
 //identify the direction i should move in to get to a target destination
 getDir = function( x1, y1, x2, y2 ) {
@@ -160,7 +137,7 @@ getMyBases = function(bases){
 	return myBases;
 }
 
-farmingUnitsInBase = function(farmingUnits, base){
+farmingUnitsInBase = function(units, base){
 
 	var count = 0;
 
@@ -173,42 +150,21 @@ farmingUnitsInBase = function(farmingUnits, base){
 	return count;
 }
 
-closestOpenBase = function(bases,unit){
+unitInMyBases = function(unit) {
 
-	dist = 9999999;
-	cBase = -1;
-	for(var i=0;i<bases.length;i++){
-		if(bases[i].allegiance < 0){
-			b_dist = Math.abs(bases[i].locx - unit.locx) + Math.abs(bases[i].locy - unit.locy);
-			if(b_dist < dist){
-				cBase = bases[i];
-				dist = b_dist;
-			}
-
+	for(var i=0;i<Bases.mine.length;i++) {
+		base = Bases.mine[i];
+		if(isUnitInBase(base,unit)) {
+			return true;
 		}
 	}
-	return cBase;
-};
 
-
-unitIsExpanding = function(unit, expansionUnits) {
-
-	for(var i=0;i<expansionUnits.length;i++){
-		if(unit.id == expansionUnits[i].id)
-			return true;
-	}
 	return false;
-};
+
+}
 
 
-unitIsFarming = function (unit, farmingUnits) {
 
-	for(var i=0;i<farmingUnits.length;i++){
-		if(unit.id == farmingUnits[i].id)
-			return true;
-	}
-	return false;
-};
 
 processUnits = function(units){
 	p_units = {
@@ -284,12 +240,12 @@ enemySort = function(e1,e2){
 
 //Distance from owned base maybe
 baseDistanceFromUnits = function(b){
-	ret = 0;
+	var ret = 0;
 	/*for(var i=0;i<Units.mine.length;i++){
 		unit = Units.mine[i];
 		ret += distance(unit.locx, unit.locy,b.locx, b.locy);
 	}*/
-	base = Bases.mine[0];
+	var base = Bases.mine[0];
 	ret = distance(base.locx,base.locy, b.locx, b.locy);
 
 	return ret;
@@ -299,6 +255,7 @@ baseDistanceFromUnits = function(b){
 baseSort = function(b1,b2){
 	return baseDistanceFromUnits(b1) -  baseDistanceFromUnits(b2);
 }
+
 
 
 orderAttack = function(unit,enemy){
@@ -320,7 +277,9 @@ dataResponse = function () {
 
 	//TODO: Rework logic to reflect pre-processed and sorted data
 	orders = [];
-	unitsExpanding = 0;
+	unitsFarming = 0;
+
+
 
 	//Go through units and give them an order
 	for (var i = 0; i < Units.mine.length; i++) {
@@ -332,16 +291,38 @@ dataResponse = function () {
 			orders.push(orderAttack(unit.id,mark));
 		}else{
 
-			if(Bases.open.length > 0 && unitsExpanding < 2){
-				//Closest open base
-				var openBase = Bases.open[0];
-				dir = getDir(unit.locx,unit.locy,openBase.locx,openBase.locy);
-				orders.push(orderMove(unit.id,dir));
-				unitsExpanding ++;
+			factor = 3*Bases.mine.length;
+
+			//If Base requires famer send
+			if(unitsFarming < factor) {
+
+				if(unitInMyBases(unit)){
+					orders.push(orderFarm(unit.id));
+					unitsFarming++;
+				}else{
+					//Go Home
+					closestBase = Bases.mine[0];
+					dir = getDir(unit.locx,unit.locy,closestBase.locx,closestBase.locy);
+					orders.push(orderMove(unit.id,dir));
+				}
+
 			}
-			 //Else Farm
+			//Expand
 			else {
-				orders.push(orderFarm(unit.id));
+
+				if(Bases.open.length == 0){
+					var enemy = Units.enemies[0];
+					dir = getDir(unit.locx,unit.locy,enemy.locx,enemy.locy);
+					orders.push(orderMove(unit.id,dir));
+				}
+				else{
+
+					var openBase = Bases.open[0];
+					dir = getDir(unit.locx,unit.locy,openBase.locx,openBase.locy);
+					orders.push(orderMove(unit.id,dir));
+				}
+
+
 			}
 		}
 	}

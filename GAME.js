@@ -10,12 +10,12 @@ var delay = 1000/fps;
 var gameLength = 3000;
 
 var players = 4;
-/*
+
 var playerList = [ "Alpha", "Beta", "Gamma", "Delta", "DynamicTransit",
 	"TheFriendlyOverlord", "Swag", "Creative","Hive","Insanity","BlackDeath",
 	"Phi","CatUnicornLazerBeam" ];
-*/
-var playerList = ["Alpha", "Beta","Gamma","CatUnicornLazerBeam"];
+
+//var playerList = ["Alpha", "Beta","Gamma","CatUnicornLazerBeam"];
 var playerColors = ["#FF0000", "#00FF00", "#0000FF", "#FF00FF"];
 var startingNumberOfUnits = 4;
 
