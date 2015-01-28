@@ -287,7 +287,7 @@ orderFarm = function(unit){
 
 orderMove = function(unit,dir){
 
-	return {"unitID": unit, "move": "", "dash": dir, "attack": "", "farm": false};
+	return {"unitID": unit, "move":dir, "dash": dir, "attack": "", "farm": false};
 }
 
 
