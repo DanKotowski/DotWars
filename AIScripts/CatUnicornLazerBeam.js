@@ -7,6 +7,11 @@ var msg = [];
 var ID;
 var Units;
 var Bases;
+var orders;
+
+var minBound = -20
+var maxBound = 520
+
 
 
 
@@ -155,7 +160,7 @@ unitInMyBases = function(unit) {
 	for(var i=0;i<Bases.mine.length;i++) {
 		base = Bases.mine[i];
 		if(isUnitInBase(base,unit)) {
-			return true;
+			return base;
 		}
 	}
 
@@ -163,13 +168,20 @@ unitInMyBases = function(unit) {
 
 }
 
+isOutsideGameMap = function(unit){
 
+	if(unit.locx > maxBound || unit.locx < minBound || unit.locy > maxBound || unit.locy < minBound ){
+		return true
+	}
+	return false;
+}
 
 
 processUnits = function(units){
 	p_units = {
 		mine:[],
 		enemies:[]
+
 	}
 
 	for(var i=0;i<units.length;i++){
@@ -178,7 +190,9 @@ processUnits = function(units){
 			p_units.mine.push(unit);
 		}
 		else if(unit.health > 0 && unit.id > 0){
-			p_units.enemies.push(unit);
+			if(!isOutsideGameMap(unit)){
+				p_units.enemies.push(unit);
+			}
 		}
 	}
 
@@ -192,7 +206,8 @@ processBases = function(bases){
 	p_bases =  {
 		open:[],
 		mine:[],
-		enemies:[]
+		enemies:[],
+		unitsInBaseFarming:{}
 	};
 
 	for(var i=0;i<bases.length;i++){
@@ -200,6 +215,7 @@ processBases = function(bases){
 		base = bases[i];
 		if(base.allegiance == ID){
 			p_bases.mine.push(base);
+			p_bases.unitsInBaseFarming[base.id] = 0;
 		}else if(base.allegiance == -1){
 			p_bases.open.push(base);
 		}else{
@@ -291,12 +307,29 @@ orderMove = function(unit,dir){
 }
 
 
+//Expand Logic
+Expand = function(unit){
+		var openBase = Bases.open[0];
+		dir = getDir(unit.locx,unit.locy,openBase.locx,openBase.locy);
+		orders.push(orderMove(unit.id,dir));
+}
+
+
+
+//Attack Logic
+
+
+
+//Farm Logic
+
 
 dataResponse = function () {
 
-	//TODO: Rework logic to reflect pre-processed and sorted data
+
+	//Clear orders
 	orders = [];
 	unitsFarming = 0;
+
 
 
 
@@ -317,39 +350,41 @@ dataResponse = function () {
 			* */
 			//If Base requires famer send
 			if(unitsFarming < factor) {
-
-				if(unitInMyBases(unit)){
+				var inBase = unitInMyBases(unit);
+				if(inBase != false && (Bases.unitsInBaseFarming[inBase.id] < 4 || Units.mine.length <= factor)){
 					orders.push(orderFarm(unit.id));
 					unitsFarming++;
+					Bases.unitsInBaseFarming[inBase.id]++;
 				}else{
-					//Go Home
-					closestBase = findClosestBase(unit);
-					dir = getDir(unit.locx,unit.locy,closestBase.locx,closestBase.locy);
-					orders.push(orderMove(unit.id,dir));
+					if(Bases.open.length != 0) {
+						Expand(unit);
+					}
+					else
+					{
+						closestBase = findClosestBase(unit);
+						dir = getDir(unit.locx, unit.locy, closestBase.locx, closestBase.locy);
+						orders.push(orderMove(unit.id, dir));
+					}
 				}
 
 			}
 			//Expand
 			else {
 
-				//TODO: Make sure units don't chase indefently;
+				//TODO: Have a better attack stratgey then chase aimlessly, enemy sort sucks
 				if(Bases.open.length == 0){
 					var enemy = Units.enemies[0];
 					dir = getDir(unit.locx,unit.locy,enemy.locx,enemy.locy);
 					orders.push(orderMove(unit.id,dir));
 				}
 				else{
-
-					var openBase = Bases.open[0];
-					dir = getDir(unit.locx,unit.locy,openBase.locx,openBase.locy);
-					orders.push(orderMove(unit.id,dir));
+					Expand(unit);
 				}
 
 
 			}
 		}
-	}
-
+	};
 	//post message back to AI Manager	
 	postMessage( { "Orders" : orders } );
 }
