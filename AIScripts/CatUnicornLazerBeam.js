@@ -343,7 +343,7 @@ dataResponse = function () {
 			orders.push(orderAttack(unit.id,mark));
 		}else{
 
-			factor = 3*Bases.mine.length;
+			factor = 2*Bases.mine.length;
 			/*TODO: Fix jitter problem, cuased by units wanting to go to diffrent base even though only unit in base
 			* need to have more complex farmer determination code. Something like check if each base has at least one
 			* unit farming.
