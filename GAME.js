@@ -27,7 +27,7 @@ var startingNumberOfUnits = 4;
 
 var maxUnitsPerBaseOwned = 10;
 
-var replayLogging = true;
+var replayLogging = true;	//Not available in tournament mode
 
 /*****************************************************************************************
  * Game Globals (do not touch)
@@ -376,20 +376,22 @@ function StartGame() {
 	var link = document.getElementById('gameloglink');
 	link.style.display = 'none';
 
-	gameLog = [];
 
 	InitializeGame();
-
-	gameLog.push(
-	{
-		"players"               : gamePlayers, 
-		"delay"                 : delay,
-		"gameLength"            : gameLength,
-		"startingNumberOfUnits" : startingNumberOfUnits,
-		"maxUnitsPerBaseOwned"  : maxUnitsPerBaseOwned,
-		"bases"                 : bases
-	});
-
+	
+	if(replayLogging) {
+		gameLog = [];
+		gameLog.push(
+		{
+			"players"               : gamePlayers, 
+			"delay"                 : delay,
+			"gameLength"            : gameLength,
+			"startingNumberOfUnits" : startingNumberOfUnits,
+			"maxUnitsPerBaseOwned"  : maxUnitsPerBaseOwned,
+			"bases"                 : bases
+		});
+	}
+	
 	//Load the AI scripts for this scrimmage
 	aiManager = new Worker('AIMANAGER.js');
 	aiManager.onmessage = AIManagerOnMessage;
@@ -406,9 +408,9 @@ function StartGame() {
 		if ( timer <= 0 ) {
 			aiManager.postMessage( { "Terminate" : "" } );
 			clearInterval( gameInterval );
-			gameLog.push( { "Terminate" : "" } );
-			link.href = makeLogFile( gameLog );
 			if( replayLogging ) {
+				gameLog.push( { "Terminate" : "" } );
+				link.href = makeLogFile( gameLog );
 				link.style.display = 'block';
 			}
 		}
